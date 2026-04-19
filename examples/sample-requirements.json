@@ -1,0 +1,9 @@
+{
+  "feature": "In-vehicle LLM assistant for navigation and vehicle settings support",
+  "intended_purpose": "Assist occupants with natural-language requests while preserving safe operation constraints",
+  "controls": [
+    "refuse unsafe driving instructions",
+    "mask direct identifiers in logs",
+    "fallback to deterministic action flows for vehicle-control adjacent intents"
+  ]
+}
