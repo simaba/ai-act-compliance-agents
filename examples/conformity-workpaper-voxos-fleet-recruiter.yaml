@@ -1,0 +1,284 @@
+# Art. 43 conformity-assessment workpaper for VoxOS Fleet Recruiter
+# (classified high-risk under Annex III #4(a) in AI-SYS-0002).
+#
+# Every row validates against schemas/conformity-assessment-row.json.
+# Run: python3 scripts/classify_cli.py validate-workpaper
+#      examples/conformity-workpaper-voxos-fleet-recruiter.yaml
+
+system_id: AI-SYS-0002
+system_name: VoxOS Fleet Recruiter
+classification_memo: examples/classification-voxos-fleet-recruiter.md
+assessment_route: Annex VI (internal control) under Art. 43(2)
+prepared_by: bagherisima@gmail.com
+prepared_on: '2026-04-19'
+documentation_version: '1.0.0'
+
+rows:
+  - id: CONF-0001
+    article: Art. 9
+    requirement: Establish, implement, document, and maintain a risk-management system.
+    applicability: applicable
+    applicability_reason: >-
+      Fleet Recruiter is high-risk under Annex III #4(a); the full risk-management
+      lifecycle in Art. 9(1)-(9) applies.
+    current_control: >-
+      Risk register maintained in docs/risk/AI-SYS-0002-risk-register.yaml,
+      reviewed quarterly, with 17 enumerated residual risks and named
+      mitigations keyed to Art. 9(2)(a)-(d).
+    evidence:
+      - type: design_doc
+        ref: docs/risk/AI-SYS-0002-risk-register.yaml
+        version: '1.3.0'
+        date: '2026-04-10'
+        signatory: safety-lead@voxos.example
+      - type: audit_memo
+        ref: docs/risk/Q1-2026-review.md
+        date: '2026-03-28'
+        signatory: head-of-risk@voxos.example
+    owner: safety-lead@voxos.example
+    priority: P0
+    status: in_progress
+    reverse_links:
+      - examples/classification-voxos-fleet-recruiter.md
+    last_updated: '2026-04-19'
+
+  - id: CONF-0002
+    article: Art. 10
+    requirement: Training, validation, and testing datasets must satisfy quality criteria including representativeness and bias examination.
+    applicability: partial
+    applicability_reason: >-
+      Dataset governance is largely in place; ongoing work to document a
+      geographic-distribution check across all five Member States in scope.
+    current_control: >-
+      Data sheet in docs/data/training-dataset.md covering collection,
+      consent basis, bias-examination methodology, and Member-State
+      representativeness for DE/NL/PL.
+    evidence:
+      - type: data_sheet
+        ref: docs/data/training-dataset.md
+        version: '2.1.0'
+        date: '2026-04-05'
+        signatory: data-governance@voxos.example
+    gap: >-
+      Representativeness analysis for ES and FR is not yet complete. Pending
+      2026-Q2 sourcing of additional validation samples.
+    owner: data-governance@voxos.example
+    priority: P1
+    due: '2026-06-30'
+    status: open
+    last_updated: '2026-04-19'
+
+  - id: CONF-0003
+    article: Art. 11
+    requirement: Technical documentation drawn up in accordance with Annex IV, kept up to date.
+    applicability: applicable
+    applicability_reason: Mandatory for every high-risk system under Art. 11(1).
+    current_control: >-
+      Annex IV eight-section technical file in docs/technical-file.md, linked
+      to all downstream artifacts via reverse_links.
+    evidence:
+      - type: design_doc
+        ref: examples/technical-file-voxos-fleet-recruiter.md
+        version: '1.0.0'
+        date: '2026-04-19'
+        signatory: bagherisima@gmail.com
+    owner: bagherisima@gmail.com
+    priority: P0
+    status: in_progress
+    reverse_links:
+      - examples/classification-voxos-fleet-recruiter.md
+    last_updated: '2026-04-19'
+
+  - id: CONF-0004
+    article: Art. 12
+    requirement: Automatic recording of events (logs) over the system's lifetime.
+    applicability: applicable
+    applicability_reason: Art. 12(1) requires logs sufficient to ensure traceability.
+    current_control: >-
+      Inference logging pipeline captures (input hash, model version, score,
+      rationale tokens, operator id) for every scoring call and retains logs
+      in tamper-evident WORM storage for 10 years per Art. 18.
+    evidence:
+      - type: log_sample
+        ref: docs/logs/sample-inference-log-2026-04-10.jsonl
+        date: '2026-04-10'
+        signatory: platform-sre@voxos.example
+      - type: design_doc
+        ref: docs/platform/log-retention.md
+        version: '1.0.0'
+        date: '2026-03-15'
+    owner: platform-sre@voxos.example
+    priority: P0
+    status: closed
+    last_updated: '2026-04-19'
+
+  - id: CONF-0005
+    article: Art. 13
+    requirement: Transparency and provision of information to deployers.
+    applicability: applicable
+    applicability_reason: >-
+      Fleet operators (deployers) need instructions for use under
+      Art. 13(1), including characteristics, capabilities, and limitations.
+    current_control: >-
+      Instructions for Use published to every deploying fleet operator,
+      including intended-purpose statement, foreseeable misuse list, score
+      interpretation guide, and mandatory human-review steps.
+    evidence:
+      - type: design_doc
+        ref: docs/customer/instructions-for-use-v1.0.pdf
+        version: '1.0.0'
+        date: '2026-04-01'
+        signatory: product-manager@voxos.example
+    owner: product-manager@voxos.example
+    priority: P0
+    status: closed
+    last_updated: '2026-04-19'
+
+  - id: CONF-0006
+    article: Art. 14
+    requirement: Design and develop for effective human oversight.
+    applicability: applicable
+    applicability_reason: >-
+      Every Annex III #4 system requires documented human-oversight design
+      covering Art. 14(4)(a)-(e).
+    current_control: >-
+      Human-oversight design document (examples/oversight-voxos-fleet-recruiter.md)
+      covering all five clauses (a) through (e), with confidence-threshold
+      escalation and assisted-review patterns, named role (hiring-manager)
+      and named escalation path (compliance-reviewer@customer).
+    evidence:
+      - type: design_doc
+        ref: examples/oversight-voxos-fleet-recruiter.md
+        version: '1.0.0'
+        date: '2026-04-19'
+        signatory: product-manager@voxos.example
+      - type: training_record
+        ref: docs/training/hiring-manager-oversight-2026-Q2.md
+        date: '2026-04-15'
+        signatory: customer-success@voxos.example
+    owner: product-manager@voxos.example
+    priority: P0
+    status: in_progress
+    last_updated: '2026-04-19'
+
+  - id: CONF-0007
+    article: Art. 15
+    requirement: Appropriate level of accuracy, robustness, and cybersecurity throughout the lifecycle.
+    applicability: partial
+    applicability_reason: >-
+      Accuracy and cybersecurity controls documented; robustness testing
+      for out-of-distribution telematics inputs still in progress.
+    current_control: >-
+      Accuracy declaration with test methodology in test report;
+      cybersecurity posture covers OWASP LLM Top 10 and SOC 2 Type II;
+      robustness suite partly complete.
+    evidence:
+      - type: test_report
+        ref: docs/testing/accuracy-report-2026-Q1.md
+        version: '1.0.0'
+        date: '2026-03-20'
+        signatory: ml-lead@voxos.example
+      - type: external_certificate
+        ref: docs/security/soc2-type2-2025.pdf
+        date: '2025-11-15'
+    gap: >-
+      OOD robustness battery for telematics inputs outside the three
+      primary vehicle categories is not yet complete.
+    owner: ml-lead@voxos.example
+    priority: P1
+    due: '2026-07-15'
+    status: open
+    last_updated: '2026-04-19'
+
+  - id: CONF-0008
+    article: Art. 16
+    requirement: Provider obligations — including QMS, technical file, Art. 17 quality-management system.
+    applicability: applicable
+    applicability_reason: Provider obligations under Art. 16 are mandatory.
+    current_control: ISO/IEC 42001-aligned AI management system documented in docs/qms/.
+    evidence:
+      - type: design_doc
+        ref: docs/qms/aims-overview.md
+        version: '1.0.0'
+        date: '2026-02-01'
+        signatory: coo@voxos.example
+    owner: coo@voxos.example
+    priority: P0
+    status: in_progress
+    last_updated: '2026-04-19'
+
+  - id: CONF-0009
+    article: Art. 43
+    requirement: Select and execute conformity-assessment route before placing on market.
+    applicability: applicable
+    applicability_reason: Required pre-market step under Art. 43(2).
+    current_control: >-
+      Annex VI internal-control route selected; conformity assessment run
+      against this workpaper; signed off by coo@voxos.example prior to
+      first release.
+    evidence:
+      - type: sign_off_memo
+        ref: docs/conformity/annex-vi-sign-off.md
+        version: '1.0.0'
+        date: '2026-04-19'
+        signatory: coo@voxos.example
+    owner: coo@voxos.example
+    priority: P0
+    status: in_progress
+    last_updated: '2026-04-19'
+
+  - id: CONF-0010
+    article: Art. 47
+    requirement: Draw up EU Declaration of Conformity per Annex V; keep for 10 years.
+    applicability: applicable
+    applicability_reason: Mandatory after successful conformity assessment.
+    current_control: DoC template populated from this workpaper upon sign-off.
+    evidence:
+      - type: design_doc
+        ref: docs/conformity/doc-template.md
+        version: '1.0.0'
+        date: '2026-04-19'
+    gap: Final DoC not yet signed; blocked on CONF-0002 and CONF-0007 closure.
+    owner: coo@voxos.example
+    priority: P0
+    due: '2026-07-31'
+    status: blocked
+    last_updated: '2026-04-19'
+
+  - id: CONF-0011
+    article: Art. 49
+    requirement: Register the high-risk AI system in the EU database before placing on market.
+    applicability: applicable
+    applicability_reason: All Annex III systems must be registered prior to market.
+    current_control: Registration workflow queued; dependent on DoC sign-off.
+    evidence:
+      - type: design_doc
+        ref: docs/conformity/eu-db-registration-plan.md
+        version: '0.9.0'
+        date: '2026-04-01'
+    gap: Registration not yet submitted; blocked on CONF-0010.
+    owner: coo@voxos.example
+    priority: P0
+    due: '2026-08-15'
+    status: blocked
+    last_updated: '2026-04-19'
+
+  - id: CONF-0012
+    article: Art. 72
+    requirement: Establish a proportionate post-market monitoring system.
+    applicability: applicable
+    applicability_reason: Mandatory for every high-risk system.
+    current_control: >-
+      PMM plan in examples/pmm-plan-voxos-fleet-recruiter.yaml, 11 signals
+      covering accuracy drift, adverse-impact monitoring, cybersecurity,
+      and deployer-feedback channels.
+    evidence:
+      - type: design_doc
+        ref: examples/pmm-plan-voxos-fleet-recruiter.yaml
+        version: '1.0.0'
+        date: '2026-04-19'
+        signatory: safety-lead@voxos.example
+    owner: safety-lead@voxos.example
+    priority: P0
+    status: in_progress
+    last_updated: '2026-04-19'

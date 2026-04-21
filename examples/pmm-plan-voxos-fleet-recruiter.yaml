@@ -1,0 +1,261 @@
+# Post-market monitoring plan for VoxOS Fleet Recruiter (AI-SYS-0002).
+# Every row validates against schemas/pmm-incident.json.
+#
+# Run: python3 scripts/traceability_check.py <repo-root>
+# to audit that every row has threshold/cadence/owner and an
+# explicit art_73_trigger.
+
+system_id: AI-SYS-0002
+classification_memo: examples/classification-voxos-fleet-recruiter.md
+conformity_workpaper: examples/conformity-workpaper-voxos-fleet-recruiter.yaml
+plan_owner: safety-lead@voxos.example
+plan_version: '1.0.0'
+last_reviewed: '2026-04-19'
+review_cadence_months: 3
+
+rows:
+  - id: PMM-0001
+    category: accuracy_drift
+    metric: >-
+      Rolling 30-day Spearman correlation between score percentile and
+      hiring-manager final-stage-advance rate, segmented by Member State.
+    source: production telemetry + customer hiring-outcome webhook
+    baseline: '0.62 correlation as of 2026-03-31'
+    threshold_warn: 'correlation < 0.50 for any Member State for 3 consecutive weeks'
+    threshold_critical: 'correlation < 0.35 for any Member State for 1 week'
+    cadence: weekly automated; daily if in warn
+    owner: ml-lead@voxos.example
+    escalation_warn: >-
+      Open drift investigation ticket, pull segment-level feature-distribution
+      diffs, notify safety-lead@voxos.example, decide on retraining within 10
+      business days.
+    escalation_critical: >-
+      Page on-call ML lead, halt auto-scoring for the affected Member State
+      within 4 hours, fall back to manual shortlist mode, notify customer-success
+      to inform deployers, draft Art. 16(g) technical-file amendment.
+    art_73_trigger: >-
+      Not a serious-incident trigger by itself; accuracy drift becomes an
+      Art. 73(1)(c) trigger only if it produces a documented adverse-impact
+      pattern across protected characteristics, in which case see PMM-0004.
+    linked_risk: docs/risk/AI-SYS-0002-risk-register.yaml#R-07
+    last_updated: '2026-04-19'
+
+  - id: PMM-0002
+    category: robustness_ood
+    metric: >-
+      Percentage of scoring requests flagged by OOD detector as outside the
+      telematics feature distribution used in training.
+    source: inference-service OOD sidecar
+    baseline: '0.8% OOD rate as of 2026-03-31'
+    threshold_warn: 'OOD rate > 3% over any 7-day window'
+    threshold_critical: 'OOD rate > 8% over any 24-hour window'
+    cadence: real-time; warn surfaced daily in ops dashboard
+    owner: platform-sre@voxos.example
+    escalation_warn: >-
+      Trigger telemetry deep-dive, identify source deployer or vehicle category,
+      tighten safe-fallback ruleset, notify ml-lead within 2 business days.
+    escalation_critical: >-
+      Automatically route affected requests to safe-fallback (manual review only),
+      page platform-sre on-call, produce incident timeline within 24 hours, update
+      technical-file performance-metrics section.
+    art_73_trigger: >-
+      Not a serious-incident trigger on its own; becomes one only if paired with
+      evidence of incorrect hiring decisions traced to OOD inputs, per
+      Art. 73(1)(c) fundamental-rights impact.
+    last_updated: '2026-04-19'
+
+  - id: PMM-0003
+    category: safety_harm
+    metric: >-
+      Confirmed hiring-decision reversals traceable to an incorrect Fleet
+      Recruiter output flagged during human-oversight review.
+    source: deployer ticket system + customer-success intake
+    baseline: 'not yet applicable (pre-launch)'
+    threshold_warn: '1 confirmed reversal in any 30-day window'
+    threshold_critical: '3 confirmed reversals in any 30-day window OR any single reversal affecting a protected-characteristic pattern'
+    cadence: continuous intake; reviewed weekly at PMM stand-up
+    owner: safety-lead@voxos.example
+    escalation_warn: >-
+      Reclassify ticket as potential serious-incident candidate, open causal-chain
+      analysis, involve DPO if a fundamental-rights element is plausible, prepare
+      Art. 73 report template even if not yet certain.
+    escalation_critical: >-
+      Halt auto-scoring in the affected Member State, engage DPO, legal, and
+      safety-lead jointly, file Art. 73(3) report to the relevant Market
+      Surveillance Authority within the applicable SLA.
+    art_73_trigger: >-
+      Art. 73(1)(c) — infringement of fundamental rights in employment context;
+      SLA: 15 days default under Art. 73(3), escalated to 2 days if a widespread
+      pattern is confirmed.
+    linked_risk: docs/risk/AI-SYS-0002-risk-register.yaml#R-01
+    last_updated: '2026-04-19'
+
+  - id: PMM-0004
+    category: safety_harm
+    metric: >-
+      Demographic-parity disparity across declared protected-characteristic
+      proxies in the score distribution, computed monthly.
+    source: internal fairness audit pipeline
+    baseline: 'parity within 0.05 for all four protected-characteristic proxies as of 2026-03-31'
+    threshold_warn: 'disparity > 0.08 for any proxy for two consecutive months'
+    threshold_critical: 'disparity > 0.12 for any proxy in any single month'
+    cadence: monthly; cross-filed with DPO and legal
+    owner: data-governance@voxos.example
+    escalation_warn: >-
+      Formal fairness-review triggered; identify contributing feature(s);
+      document mitigation plan with ml-lead; share summary with customer-advisory
+      board.
+    escalation_critical: >-
+      Immediately gate new deployments; file Art. 73(1)(c) report within 15 days
+      (2 days if widespread); initiate Art. 25 substantial-modification review to
+      determine whether retraining triggers a new classification.
+    art_73_trigger: >-
+      Art. 73(1)(c) — fundamental-rights infringement is the operative trigger.
+    last_updated: '2026-04-19'
+
+  - id: PMM-0005
+    category: human_oversight_usage
+    metric: >-
+      Rate at which hiring managers override the structured rationale and
+      proceed on score alone (detected via session telemetry).
+    source: product telemetry
+    baseline: 'Target: < 15% of scoring sessions use score-only pattern.'
+    threshold_warn: 'score-only sessions > 25% for any deployer in any week'
+    threshold_critical: 'score-only sessions > 40% for any deployer in any week'
+    cadence: weekly per-deployer; monthly rolled up
+    owner: product-manager@voxos.example
+    escalation_warn: >-
+      Customer-success outreach to the deployer, retrain hiring managers on
+      intended use, update Instructions for Use if pattern is systemic.
+    escalation_critical: >-
+      Suspend the deployer's access pending corrective training; notify safety-lead
+      and compliance; document under Art. 26 deployer-obligation breach.
+    art_73_trigger: >-
+      Not a standalone trigger, but becomes Art. 73(1)(c) relevant if paired with
+      PMM-0003 evidence of reversed decisions.
+    last_updated: '2026-04-19'
+
+  - id: PMM-0006
+    category: cybersecurity
+    metric: >-
+      Count of successful prompt-injection attempts or attempts to extract
+      training data via inference interface.
+    source: security telemetry + WAF + LLM guardrail logs
+    baseline: '0 successful attempts per month since 2025-Q4 launch-readiness drills.'
+    threshold_warn: '>= 1 successful prompt-injection in any 24-hour window'
+    threshold_critical: '>= 1 successful training-data extraction OR >= 5 successful prompt-injections in any 24-hour window'
+    cadence: continuous; security on-call reviews daily
+    owner: security-lead@voxos.example
+    escalation_warn: >-
+      Rotate guardrail policies, tighten input sanitisation, notify platform-sre,
+      open incident-response ticket per Art. 15(4) cybersecurity obligation.
+    escalation_critical: >-
+      Engage incident-response team; isolate affected shard; notify Art. 73 owners
+      for Art. 73(1)(b) consideration (critical-infrastructure impact depends on
+      deployer context).
+    art_73_trigger: >-
+      Art. 73(1)(b) only where a deployer qualifies as critical infrastructure;
+      otherwise a cybersecurity incident reportable via separate obligations.
+    last_updated: '2026-04-19'
+
+  - id: PMM-0007
+    category: data_quality
+    metric: >-
+      Proportion of scoring requests with missing mandatory resume fields or
+      malformed telematics payloads.
+    source: inference-service validation layer
+    baseline: '1.2% malformed rate as of 2026-03-31'
+    threshold_warn: '> 4% malformed rate for 3 consecutive days'
+    threshold_critical: '> 10% malformed rate in any single day'
+    cadence: daily
+    owner: platform-sre@voxos.example
+    escalation_warn: >-
+      Investigate upstream schema drift; contact affected deployer; open
+      data-quality engineering ticket with 5 business-day SLA.
+    escalation_critical: >-
+      Reject malformed requests at ingress until cause is fixed; hold scoring
+      output for affected deployer; preserve samples for post-mortem.
+    art_73_trigger: >-
+      Not a serious-incident trigger unless data-quality regression produced
+      incorrect scores flagged under PMM-0003.
+    last_updated: '2026-04-19'
+
+  - id: PMM-0008
+    category: deployer_feedback
+    metric: >-
+      Number of deployer-submitted "score disagreement" tickets classified as
+      substantive by customer-success.
+    source: deployer ticket system
+    baseline: 'Target: < 8 substantive disagreements per deployer per quarter.'
+    threshold_warn: '> 12 substantive disagreements for any deployer in any quarter'
+    threshold_critical: '> 25 substantive disagreements for any deployer in any quarter'
+    cadence: continuous intake; trended weekly
+    owner: customer-success@voxos.example
+    escalation_warn: >-
+      Open deployer-health ticket, schedule feedback session, feed trends into
+      product-backlog review with product-manager.
+    escalation_critical: >-
+      Dedicated deployer-health review with safety-lead, ml-lead, and
+      product-manager; evaluate whether an Art. 25 substantial-modification is
+      required.
+    art_73_trigger: >-
+      Not a serious-incident trigger by itself; may aggregate into Art. 73(1)(c)
+      if it surfaces fundamental-rights impact.
+    last_updated: '2026-04-19'
+
+  - id: PMM-0009
+    category: third_party_dependency
+    metric: Availability and output consistency of the upstream foundation model API.
+    source: vendor status page + internal synthetic-probe suite
+    baseline: '99.95% monthly availability as of 2026-03-31.'
+    threshold_warn: 'availability < 99.5% in any 7-day window'
+    threshold_critical: 'availability < 99% in any 24-hour window OR output-consistency regression > 3%'
+    cadence: real-time; dashboard reviewed every 6 hours by on-call
+    owner: platform-sre@voxos.example
+    escalation_warn: >-
+      Engage vendor support, extend timeout budgets, prepare safe-fallback
+      switchover decision.
+    escalation_critical: >-
+      Activate safe-fallback mode (human-only shortlist), notify deployers via
+      status page, produce vendor-dependency post-mortem within 5 business days.
+    art_73_trigger: >-
+      Not a standalone serious-incident trigger.
+    last_updated: '2026-04-19'
+
+  - id: PMM-0010
+    category: operational
+    metric: End-to-end scoring latency P95.
+    source: APM
+    baseline: '420ms P95'
+    threshold_warn: 'P95 > 900ms for 30 minutes'
+    threshold_critical: 'P95 > 2000ms for 15 minutes'
+    cadence: real-time
+    owner: platform-sre@voxos.example
+    escalation_warn: >-
+      Scale inference fleet, investigate hot shards, page platform-sre on-call if
+      sustained > 2 hours.
+    escalation_critical: >-
+      Page platform-sre on-call, invoke failover, activate safe-fallback mode if
+      latency persists > 30 minutes.
+    art_73_trigger: Not a serious-incident trigger.
+    last_updated: '2026-04-19'
+
+  - id: PMM-0011
+    category: other
+    metric: Regulatory-change detection — new Member-State guidance, MSA advisory, EDPB opinion touching Annex III #4.
+    source: regulatory-horizon feed + MSA subscriptions
+    baseline: Not applicable.
+    threshold_warn: Any new guidance affecting Annex III #4 scope or deployer obligations.
+    threshold_critical: 'Any ruling narrowing Art. 6(3) derogation or a binding MSA finding against VoxOS or a close competitor.'
+    cadence: weekly digest
+    owner: legal-counsel@voxos.example
+    escalation_warn: >-
+      Add to legal-watch report; assess whether classification memo should be
+      superseded; brief COO.
+    escalation_critical: >-
+      Convene classification review within 5 business days; potentially invoke
+      Art. 25 substantial-modification path; update DoC if affected.
+    art_73_trigger: >-
+      Not a serious-incident trigger; relates to Art. 16(g) provider obligation
+      to cooperate with competent authorities.
+    last_updated: '2026-04-19'

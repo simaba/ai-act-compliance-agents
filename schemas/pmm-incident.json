@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/ai-act-compliance-agents/schemas/pmm-incident.json",
+  "title": "Post-Market Monitoring Signal / Incident Row",
+  "description": "Schema for a monitored-signal row or an Art. 73 serious-incident record in a post-market monitoring plan.",
+  "type": "object",
+  "required": [
+    "id",
+    "category",
+    "metric",
+    "source",
+    "threshold_warn",
+    "threshold_critical",
+    "cadence",
+    "owner",
+    "escalation_warn",
+    "escalation_critical",
+    "art_73_trigger"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^PMM-[0-9]{4,}$"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "accuracy_drift",
+        "robustness_ood",
+        "safety_harm",
+        "human_oversight_usage",
+        "cybersecurity",
+        "data_quality",
+        "operational",
+        "deployer_feedback",
+        "third_party_dependency",
+        "other"
+      ]
+    },
+    "metric": { "type": "string", "minLength": 5 },
+    "source": {
+      "type": "string",
+      "minLength": 3,
+      "description": "Where the signal is collected (e.g., production telemetry, deployer ticket system)."
+    },
+    "baseline": {
+      "type": "string",
+      "description": "Initial value or state to compare against, with date."
+    },
+    "threshold_warn": { "type": "string", "minLength": 3 },
+    "threshold_critical": { "type": "string", "minLength": 3 },
+    "cadence": {
+      "type": "string",
+      "description": "Review frequency, e.g., 'weekly automated; daily if in warn'."
+    },
+    "owner": {
+      "type": "string",
+      "format": "email"
+    },
+    "escalation_warn": {
+      "type": "string",
+      "minLength": 10,
+      "description": "Defined response action for warn threshold. 'Investigate' is not a response."
+    },
+    "escalation_critical": {
+      "type": "string",
+      "minLength": 10
+    },
+    "art_73_trigger": {
+      "type": "string",
+      "minLength": 10,
+      "description": "Explicit mapping to Art. 73 (a)-(d) or explicit 'not a serious-incident trigger' with reason."
+    },
+    "linked_risk": {
+      "type": "string",
+      "description": "Optional link back to a risk register entry."
+    },
+    "incident_record": {
+      "type": "object",
+      "description": "Populated only when the row records an actual Art. 73 serious incident.",
+      "required": [
+        "occurred_at",
+        "reported_at",
+        "severity",
+        "description",
+        "causal_chain",
+        "corrective_action",
+        "reported_to_authority"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "occurred_at": { "type": "string", "format": "date-time" },
+        "reported_at": { "type": "string", "format": "date-time" },
+        "severity": {
+          "type": "string",
+          "enum": ["death", "serious_harm", "critical_infrastructure", "fundamental_rights", "property_environment"]
+        },
+        "description": { "type": "string", "minLength": 20 },
+        "causal_chain": { "type": "string", "minLength": 20 },
+        "corrective_action": { "type": "string", "minLength": 10 },
+        "reported_to_authority": {
+          "type": "object",
+          "required": ["authority", "report_id", "reported_within_sla"],
+          "additionalProperties": false,
+          "properties": {
+            "authority": { "type": "string" },
+            "report_id": { "type": "string" },
+            "reported_within_sla": { "type": "boolean" },
+            "sla_applied": {
+              "type": "string",
+              "enum": ["immediate_10_days", "two_days", "fifteen_days"]
+            }
+          }
+        }
+      }
+    },
+    "last_updated": { "type": "string", "format": "date" }
+  }
+}

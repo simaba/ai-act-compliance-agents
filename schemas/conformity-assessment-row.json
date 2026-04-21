@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/ai-act-compliance-agents/schemas/conformity-assessment-row.json",
+  "title": "Conformity Assessment Workpaper Row",
+  "description": "Schema for a single requirement row in the Art. 43 conformity-assessment workpaper produced by the conformity-checker agent.",
+  "type": "object",
+  "required": [
+    "id",
+    "article",
+    "requirement",
+    "applicability",
+    "applicability_reason",
+    "owner",
+    "priority",
+    "status"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^CONF-[0-9]{4,}$"
+    },
+    "article": {
+      "type": "string",
+      "pattern": "^Art\\.\\s+\\d+(\\([0-9a-zA-Z]+\\))*$"
+    },
+    "requirement": {
+      "type": "string",
+      "minLength": 10,
+      "description": "One-sentence summary of the regulatory requirement."
+    },
+    "applicability": {
+      "type": "string",
+      "enum": ["applicable", "not_applicable", "partial"]
+    },
+    "applicability_reason": {
+      "type": "string",
+      "minLength": 10,
+      "description": "Why this article applies (or does not) to this system."
+    },
+    "current_control": {
+      "type": "string",
+      "minLength": 10,
+      "description": "What the team actually does in response to the article. Required when applicability is 'applicable' or 'partial'."
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["type", "ref"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "design_doc",
+              "test_report",
+              "audit_memo",
+              "data_sheet",
+              "log_sample",
+              "screen_recording",
+              "training_record",
+              "sign_off_memo",
+              "external_certificate",
+              "other"
+            ]
+          },
+          "ref": { "type": "string", "minLength": 2 },
+          "version": { "type": "string" },
+          "date": { "type": "string", "format": "date" },
+          "signatory": { "type": "string", "format": "email" }
+        }
+      }
+    },
+    "gap": {
+      "type": "string",
+      "description": "What is missing relative to the requirement. Required when status is 'open'."
+    },
+    "owner": {
+      "type": "string",
+      "format": "email",
+      "description": "Named human owner. Not 'team', not 'legal', not 'TBD'."
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["P0", "P1", "P2", "P3"]
+    },
+    "due": { "type": "string", "format": "date" },
+    "status": {
+      "type": "string",
+      "enum": ["open", "in_progress", "blocked", "closed", "superseded"]
+    },
+    "reverse_links": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Pointers back to upstream artifacts (classification memo, technical file section, etc.)."
+    },
+    "notes": { "type": "string" },
+    "last_updated": { "type": "string", "format": "date" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "applicability": { "const": "applicable" } } },
+      "then": { "required": ["current_control", "evidence"] }
+    },
+    {
+      "if": { "properties": { "applicability": { "const": "partial" } } },
+      "then": { "required": ["current_control", "evidence", "gap"] }
+    },
+    {
+      "if": { "properties": { "status": { "const": "open" } } },
+      "then": { "required": ["gap", "due"] }
+    }
+  ]
+}
