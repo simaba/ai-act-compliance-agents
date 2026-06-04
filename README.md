@@ -1,16 +1,18 @@
 # AI Act Compliance Agents
 
-An agent-harness concept for structured EU AI Act readiness, conformity-assessment support artifacts, and ISO 26262 / ISO 21448 alignment thinking for automotive AI systems.
+An agent-harness concept for EU AI Act readiness, conformity-assessment support artifacts, and ISO 26262 / ISO 21448 traceability for automotive AI systems.
 
-This repository is designed for product, safety, compliance, and engineering teams exploring repeatable workflows for classification, documentation, oversight, post-market monitoring, and traceability.
-
-## Status
+## Maturity
 
 **Early practitioner prototype.**
 
 This repository is a structured drafting and traceability aid. It is not a legal product, compliance certification tool, safety-case generator, or substitute for qualified legal, safety, cybersecurity, privacy, regulatory, or engineering review.
 
-## Scope
+## Purpose
+
+This repository is designed for product, safety, compliance, and engineering teams exploring repeatable workflows for classification, documentation, oversight, post-market monitoring, and traceability.
+
+Core focus areas:
 
 - EU AI Act risk-classification support
 - conformity-assessment support artifacts
@@ -19,14 +21,14 @@ This repository is a structured drafting and traceability aid. It is not a legal
 - post-market monitoring plan drafts
 - traceability between regulatory and safety expectations
 
-## Core components
+## Current capabilities
 
 - `agents/` specialized compliance roles
 - `skills/` repeatable regulatory and safety workflows
 - `commands/` entry points for common tasks
 - `templates/` draft documentation artifacts
 - `rules/` always-on compliance writing standards
-- `src/` light Python utilities for requirement traceability
+- `src/` lightweight Python utilities for requirement traceability
 - `tests/` unit tests for mapping helpers
 
 ## Included agents
@@ -54,7 +56,7 @@ This repository is a structured drafting and traceability aid. It is not a legal
    `ai-act-trace examples/sample-requirements.json`
 3. Open `AGENTS.md` in your harness for guided workflows.
 
-## Public-safe use rule
+## Publication safety
 
 Only publish fictional, synthetic, or fully sanitized examples in this repository.
 
@@ -69,9 +71,9 @@ Do not publish:
 - unreleased product names, roadmaps, or architecture
 - real safety requirements, hazards, incidents, or test results
 
-## What this repo does not claim
+## Out of scope
 
-This repo does **not** claim to provide:
+This prototype does not provide:
 
 - legal advice
 - compliance certification
@@ -82,9 +84,9 @@ This repo does **not** claim to provide:
 - production-release readiness
 - official guidance from any standards body, regulator, employer, or automaker
 
-## Next maturity step
+## Roadmap
 
-Before public promotion, this repo should add:
+Before public promotion, this repository should add:
 
 1. a public-safe sample traceability file using only fictional requirements
 2. a clearer schema for regulatory and safety mappings
