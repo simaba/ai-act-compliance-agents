@@ -1,9 +1,35 @@
 {
-  "feature": "In-vehicle LLM assistant for navigation and vehicle settings support",
-  "intended_purpose": "Assist occupants with natural-language requests while preserving safe operation constraints",
+  "feature": "Fictional in-vehicle assistant",
+  "intended_purpose": "Assist occupants with synthetic natural-language requests while preserving safe-operation constraints",
   "controls": [
-    "refuse unsafe driving instructions",
-    "mask direct identifiers in logs",
-    "fallback to deterministic action flows for vehicle-control adjacent intents"
+    {
+      "id": "CTRL-SAF-001",
+      "control": "Refuse fictional unsafe driving instructions and route the user to a safe alternative.",
+      "source": {
+        "framework": "EU AI Act practitioner mapping",
+        "reference": "Human oversight and risk-control example",
+        "version": "Regulation (EU) 2024/1689 reference checked 2026-06"
+      },
+      "owner": "Fictional Safety Review Owner",
+      "review_status": "evidence_pending",
+      "evidence": []
+    },
+    {
+      "id": "CTRL-PRIV-001",
+      "control": "Mask direct identifiers in synthetic logs before storage.",
+      "source": {
+        "framework": "Privacy-by-design practitioner mapping",
+        "reference": "Data minimization control example",
+        "version": "Sample v1.0"
+      },
+      "owner": "Fictional Privacy Review Owner",
+      "review_status": "verified",
+      "evidence": [
+        {
+          "artifact": "Synthetic masking test report",
+          "location": "examples/evidence/synthetic-masking-test.md"
+        }
+      ]
+    }
   ]
 }
