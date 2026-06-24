@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AI Act Compliance Agents Traceability Register",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["feature", "intended_purpose", "controls"],
+  "properties": {
+    "feature": {"type": "string", "minLength": 1},
+    "intended_purpose": {"type": "string", "minLength": 1},
+    "controls": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "control", "source", "owner", "review_status", "evidence"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "control": {"type": "string", "minLength": 1},
+          "owner": {"type": "string", "minLength": 1},
+          "review_status": {
+            "type": "string",
+            "enum": ["planned", "evidence_pending", "in_review", "verified", "blocked"]
+          },
+          "source": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["framework", "reference", "version"],
+            "properties": {
+              "framework": {"type": "string", "minLength": 1},
+              "reference": {"type": "string", "minLength": 1},
+              "version": {"type": "string", "minLength": 1}
+            }
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["artifact", "location"],
+              "properties": {
+                "artifact": {"type": "string", "minLength": 1},
+                "location": {"type": "string", "minLength": 1}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
