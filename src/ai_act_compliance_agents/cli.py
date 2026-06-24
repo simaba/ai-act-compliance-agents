@@ -2,16 +2,22 @@ from __future__ import annotations
 
 import json
 import sys
-from .core import load_requirements, build_traceability_rows
+
+from .core import RequirementsValidationError, build_traceability_rows, load_requirements
 
 
 def main() -> int:
     if len(sys.argv) != 2:
-        print("Usage: ai-act-trace <requirements.json>")
+        print("Usage: ai-act-trace <requirements.json>", file=sys.stderr)
         return 1
 
-    payload = load_requirements(sys.argv[1])
-    rows = build_traceability_rows(payload)
+    try:
+        payload = load_requirements(sys.argv[1])
+        rows = build_traceability_rows(payload)
+    except (OSError, RequirementsValidationError) as exc:
+        print(f"Validation error: {exc}", file=sys.stderr)
+        return 2
+
     print(json.dumps(rows, indent=2, ensure_ascii=False))
     return 0
 
