@@ -29,7 +29,9 @@ Core focus areas:
 - `templates/` draft documentation artifacts
 - `rules/` always-on compliance writing standards
 - `src/` lightweight Python utilities for requirement traceability
-- `tests/` unit tests for mapping helpers
+- `schemas/traceability.schema.json` machine-readable input schema
+- `docs/traceability-input.md` input contract, status definitions, and migration notes
+- `tests/` unit tests for traceability validation and mapping helpers
 
 ## Included agents
 
@@ -52,9 +54,16 @@ Core focus areas:
 
 1. Install in editable mode:
    `pip install -e .`
-2. Run the example traceability check:
+2. Review the [traceability input contract](docs/traceability-input.md).
+3. Run the fictional example traceability check:
    `ai-act-trace examples/sample-requirements.json`
-3. Open `AGENTS.md` in your harness for guided workflows.
+4. Open `AGENTS.md` in your harness for guided workflows.
+
+### Traceability input migration
+
+The traceability utility now expects structured control objects, not a list of plain strings. Each control has a stable ID, source framework/reference/version, accountable owner, review status, and evidence list. This allows the output to support review and provenance rather than only generate a display row.
+
+See [docs/traceability-input.md](docs/traceability-input.md) for the required shape, supported statuses, and migration guidance.
 
 ## Publication safety
 
@@ -88,11 +97,10 @@ This prototype does not provide:
 
 Before public promotion, this repository should add:
 
-1. a public-safe sample traceability file using only fictional requirements
-2. a clearer schema for regulatory and safety mappings
-3. a methodology note explaining how mappings should be reviewed
-4. tests for edge cases in requirement traceability
-5. a final source-verification checklist for any regulatory references
+1. a methodology note explaining how mappings and source versions should be reviewed
+2. a final source-verification checklist for any regulatory references
+3. broader edge-case coverage for nested evidence, lifecycle updates, and reviewer handover
+4. export formats that preserve source provenance and review history
 
 ## Scope and disclaimer
 
