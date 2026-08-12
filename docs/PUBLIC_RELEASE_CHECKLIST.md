@@ -28,6 +28,13 @@ Complete this checklist before making the repository public or publishing a rele
 - [ ] README, input contract, methodology, and source baseline agree.
 - [ ] Changelog and release notes accurately describe the published scope.
 
+## Repository hardening (recommended)
+
+- [ ] Maintain at least one fully fictional traceability example.
+- [ ] Keep the mapping methodology explicit, including how public source references are selected and reviewed.
+- [ ] Cover traceability edge cases in tests.
+- [ ] Verify the documented setup and test path from a clean environment before the first public release.
+
 ## Release practice
 
 - [ ] Create a draft release and review all notes/assets before publishing.
